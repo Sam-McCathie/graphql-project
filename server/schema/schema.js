@@ -2,14 +2,20 @@ const graphql = require("graphql");
 const _ = require("lodash");
 
 // Below is object destructuring
-const {GraphQLObjectType, GraphQLString, GraphQLSchema, GraphQLID, GraphQLInt} =
-  graphql;
+const {
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLSchema,
+  GraphQLID,
+  GraphQLInt,
+  GraphQLList,
+} = graphql;
 
 // dummy data
 const books = [
-  {name: "Bookie wookie", genre: "Fantasy", id: "1", authorID: "1"},
-  {name: "book book", genre: "Fantasy", id: "2", authorID: "1"},
-  {name: "strawberry", genre: "Sci-Fi", id: "3", authorID: "2"},
+  {name: "Bookie wookie", genre: "Fantasy", id: "1", authorId: "1"},
+  {name: "book book", genre: "Fantasy", id: "2", authorId: "1"},
+  {name: "strawberry", genre: "Sci-Fi", id: "3", authorId: "2"},
 ];
 
 const authors = [
@@ -27,7 +33,7 @@ const BookType = new GraphQLObjectType({
     author: {
       type: AuthorType,
       resolve(parent, args) {
-        return _.find(authors, {id: parent.authorID});
+        return _.find(authors, {id: parent.authorId});
       },
     },
   }),
@@ -39,6 +45,12 @@ const AuthorType = new GraphQLObjectType({
     id: {type: GraphQLID},
     name: {type: GraphQLString},
     age: {type: GraphQLInt},
+    books: {
+      type: new GraphQLList(BookType),
+      resolve(parent, args) {
+        return _.filter(books, {authorId: parent.id});
+      },
+    },
   }),
 });
 
