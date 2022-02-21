@@ -1,12 +1,20 @@
 const express = require("express");
 const {graphqlHTTP} = require("express-graphql");
 const schema = require("./schema/schema.js");
+const mongoose = require("mongoose");
+require("dotenv").config();
 
 const app = express();
 const PORT = 9000;
 
-// middleware
-// graphqlHTTP takes an argument of a schema object.
+mongoose.connect(process.env.CONNECTION_STRING, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+mongoose.connection.once("open", () => {
+  console.log("Connected to database");
+});
+
 app.use(
   `/graphql`,
   graphqlHTTP({
